@@ -99,6 +99,11 @@ module Rack
     module_function :parse_query
 
     def parse_nested_query(qs, d = nil)
+      # Unescape queries without '=' and '&' symbols or with '=' symbol only at end.
+      if qs && !(qs =~ /[=&]/) || (qs =~ /[^=]*=$/)
+        qs = unescape(qs)
+      end
+
       params = KeySpaceConstrainedParams.new
 
       (qs || '').split(d ? /[#{d}] */n : DEFAULT_SEP).each do |p|
